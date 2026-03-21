@@ -39,8 +39,9 @@ public class UserController : Controller
 
             if (result.Succeeded)
                 return RedirectToAction("Index");
+            else
+                result.Errors.ToList().ForEach(e => ModelState.AddModelError("", e.Description));
         }
-
         return View();
     }
 }

@@ -1,3 +1,4 @@
+using AuthMVC.CustomValidations;
 using AuthMVC.Models.Authentication;
 using AuthMVC.Models.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 // Identity ekleme
-builder.Services.AddIdentity<AppUser, AppRole>()
+builder.Services.AddIdentity<AppUser, AppRole>(options =>
+{
+    options.Password.RequiredLength = 5; //En az kaç karakterli olması gerektiğini belirtiyoruz.
+    options.Password.RequireNonAlphanumeric = false; //Alfanumerik zorunluluğunu kaldırıyoruz.
+    options.Password.RequireLowercase = false; //Küçük harf zorunluluğunu kaldırıyoruz.
+    options.Password.RequireUppercase = false; //Büyük harf zorunluluğunu kaldırıyoruz.
+    options.Password.RequireDigit = false; //0-9 arası sayısal karakter zorunluluğunu kaldırıyoruz.
+})
+    .AddPasswordValidator<CustomPasswordValidation>()
     .AddEntityFrameworkStores<AppDbContext>();
 
 var app = builder.Build();
