@@ -3,8 +3,8 @@
 namespace AuthMVC.Models.Authentication;
 
 /// <summary>
-/// Sistem üzerinde kullanıcıları temsil eden sınıftır.
+/// Kullanıcının rollerini tanımlayan sınıftır.
 /// </summary>
-public class AppUser : IdentityUser<int>
+public class AppRole : IdentityRole<int>
 {
 }
