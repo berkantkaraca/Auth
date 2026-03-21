@@ -20,8 +20,13 @@ builder.Services.AddIdentity<AppUser, AppRole>(options =>
     options.Password.RequireLowercase = false; //Küçük harf zorunluluğunu kaldırıyoruz.
     options.Password.RequireUppercase = false; //Büyük harf zorunluluğunu kaldırıyoruz.
     options.Password.RequireDigit = false; //0-9 arası sayısal karakter zorunluluğunu kaldırıyoruz.
+
+    options.User.RequireUniqueEmail = true; //Email adreslerini tekilleştiriyoruz.
+    options.User.AllowedUserNameCharacters = "abcçdefghiıjklmnoöpqrsştuüvwxyzABCÇDEFGHIİJKLMNOÖPQRSŞTUÜVWXYZ0123456789-._@+"; //Kullanıcı adında geçerli olan karakterleri belirtiyoruz.
+
 })
     .AddPasswordValidator<CustomPasswordValidation>()
+    .AddUserValidator<CustomUserValidation>()
     .AddEntityFrameworkStores<AppDbContext>();
 
 var app = builder.Build();
