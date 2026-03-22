@@ -241,4 +241,9 @@ public class UserController : Controller
         await _signInManager.SignOutAsync();
         await _signInManager.SignInAsync(user, true);
     }
+
+    public IActionResult AccessDenied()
+    {
+        return View();
+    }
 }

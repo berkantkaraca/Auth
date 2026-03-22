@@ -62,6 +62,11 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            <a asp-action="Editor" asp-controller="Pages">Editor</a> |
+            <a asp-action="Moderator" asp-controller="Pages">Moderator</a> |
+            <a asp-action="Admin" asp-controller="Pages">Admin</a> |
+
+            <br />
             @RenderBody()
         </main>
     </div>

@@ -36,6 +36,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/User/Login";
     options.LogoutPath = "/User/Logout";
+    options.AccessDeniedPath = "/User/AccessDenied";
     options.Cookie.Name = "IdentityCookie"; //Cookie ismi
     options.Cookie.HttpOnly = true; // Client-side erişimini engeller.
 
