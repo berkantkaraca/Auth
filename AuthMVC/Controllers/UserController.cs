@@ -42,12 +42,39 @@ public class UserController : Controller
                 Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(user, model.Password, model.Persistent, model.Lock);
 
                 if (result.Succeeded)
+                {
+                    await _userManager.ResetAccessFailedCountAsync(user); //Önceki hataları girişler neticesinde +1 arttırılmış tüm değerleri sıfıra çekiyoruz.
+
+                    if (string.IsNullOrEmpty(TempData["returnUrl"] != null ? TempData["returnUrl"].ToString() : ""))
+                        return RedirectToAction("Index");
+
                     return Redirect(TempData["returnUrl"].ToString());
+                }
+                else
+                {
+                    await _userManager.AccessFailedAsync(user); //Eğer ki başarısız bir account girişi söz konusu ise AccessFailedCount kolonundaki değer +1 arttırılacaktır. 
+
+                    int failcount = await _userManager.GetAccessFailedCountAsync(user); //Kullanıcının yapmış olduğu başarısız giriş deneme adedini alıyoruz.
+
+                    if (failcount == 3)
+                    {
+                        await _userManager.SetLockoutEndDateAsync(user, new DateTimeOffset(DateTime.Now.AddMinutes(1))); //Eğer ki başarısız giriş denemesi 3'ü bulduysa ilgili kullanıcının hesabını kilitliyoruz.
+                        ModelState.AddModelError("Locked", "Art arda 3 başarısız giriş denemesi yaptığınızdan dolayı hesabınız 1 dk kitlenmiştir.");
+                    }
+                    else
+                    {
+                        if (result.IsLockedOut)
+                            ModelState.AddModelError("Locked", "Art arda 3 başarısız giriş denemesi yaptığınızdan dolayı hesabınız 1 dk kilitlenmiştir.");
+                        else
+                            ModelState.AddModelError("NotUser2", "E-posta veya şifre yanlış.");
+                    }
+
+                }
             }
             else
             {
                 ModelState.AddModelError("NotUser", "Böyle bir kullanıcı bulunmamaktadır.");
-                ModelState.AddModelError("NotUser2", "E-posta v0eya şifre yanlış.");
+                ModelState.AddModelError("NotUser2", "E-posta veya şifre yanlış.");
             }
         }
 
