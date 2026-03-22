@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="AuthMVC/AuthMVC.csproj" />
+  <Project Path="PolicyBasedAuthorization/PolicyBasedAuthorization.csproj" />
 </Solution>
