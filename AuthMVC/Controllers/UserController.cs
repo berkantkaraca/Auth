@@ -177,4 +177,63 @@ public class UserController : Controller
 
         return View();
     }
+
+    [HttpPost]
+    public async Task<IActionResult> EditProfile(UserDetailViewModel model)
+    {
+        if (ModelState.IsValid)
+        {
+            AppUser user = await _userManager.FindByNameAsync(User.Identity.Name);
+            user.PhoneNumber = model.PhoneNumber;
+
+            IdentityResult result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+            {
+                result.Errors.ToList().ForEach(e => ModelState.AddModelError(e.Code, e.Description));
+                return View(model);
+            }
+
+            // Yeni Cookie Oluşturma
+            await _userManager.UpdateSecurityStampAsync(user);
+            await _signInManager.SignOutAsync();
+            await _signInManager.SignInAsync(user, true);
+        }
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> EditPassword(EditPasswordViewModel model)
+    {
+        if (ModelState.IsValid)
+        {
+            AppUser user = await _userManager.FindByNameAsync(User.Identity.Name);
+
+            if (await _userManager.CheckPasswordAsync(user, model.OldPassword))
+            {
+                IdentityResult result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+
+                if (!result.Succeeded)
+                {
+                    result.Errors.ToList().ForEach(e => ModelState.AddModelError(e.Code, e.Description));
+                    return View(model);
+                }
+
+                // Yeni Cookie Oluşturma
+                //await SetNewCookieAsync(user);
+                await _userManager.UpdateSecurityStampAsync(user);
+                await _signInManager.SignOutAsync();
+                await _signInManager.SignInAsync(user, true);
+            }
+        }
+        return RedirectToAction("Index");
+    }
+
+    async Task SetNewCookieAsync(AppUser user)
+    {
+        await _userManager.UpdateSecurityStampAsync(user);
+        await _signInManager.SignOutAsync();
+        await _signInManager.SignInAsync(user, true);
+    }
 }
