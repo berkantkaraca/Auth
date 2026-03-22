@@ -111,10 +111,15 @@ public class UserController : Controller
         return View();
     }
 
-    public async Task<IActionResult> Logout()
+    //public async Task<IActionResult> Logout()
+    //{
+    //    await _signInManager.SignOutAsync();
+    //    return RedirectToAction("Index");
+    //}
+
+    public async Task Logout()
     {
         await _signInManager.SignOutAsync();
-        return RedirectToAction("Index");
     }
 
     public IActionResult PasswordReset()
