@@ -30,6 +30,26 @@ builder.Services.AddIdentity<AppUser, AppRole>(options =>
     .AddErrorDescriber<CustomIdentityErrorDescriber>()
     .AddEntityFrameworkStores<AppDbContext>();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/User/Login";
+    options.Cookie.Name = "IdentityCookie"; //Cookie ismi
+    options.Cookie.HttpOnly = true; // Client-side erişimini engeller.
+
+    /*None – Cookie'leri tüm 3. taraf isteklere ekler.
+    Strict – Cookie'leri hiçbir 3. taraf isteğe göndermez.
+    Lax – Cookie'leri yalnızca adres çubuğunu değiştirmeyen isteklere göndermez.*/
+    options.Cookie.SameSite = SameSiteMode.Lax;
+
+    /*Always – Cookie'leri yalnızca HTTPS üzerinden erişilebilir yapar.
+     SameAsRequest – Cookie'leri hem HTTP hem de HTTPS üzerinden erişilebilir yapar.
+     None – Cookie'leri yalnızca HTTP üzerinden erişilebilir yapar.*/
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
+    options.SlidingExpiration = true; // Sürenin yarısında istek gelirse, süre sıfırlanır.
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(2); // Cookie süresi 2 dakika.
+});
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
